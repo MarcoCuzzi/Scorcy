@@ -1,4 +1,4 @@
-# crea_scorciatoia
+# Scorcy
 
 > Crea scorciatoie web sul desktop di Ubuntu con un solo comando.
 
