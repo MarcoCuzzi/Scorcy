@@ -1,12 +1,13 @@
-# Scorcy
+# scorcy
 
-> Crea scorciatoie web sul desktop di Ubuntu con un solo comando.
+> Crea scorciatoie web sul desktop Linux con un solo comando.
 
 ---
 
 ## Indice
 
 - [Panoramica](#panoramica)
+- [Compatibilità](#compatibilità)
 - [Requisiti](#requisiti)
 - [Installazione](#installazione)
 - [Utilizzo](#utilizzo)
@@ -20,7 +21,7 @@
 
 ## Panoramica
 
-`crea_scorciatoia.py` è uno script Python che genera file `.desktop` sul Desktop di Ubuntu, permettendo di aprire qualsiasi sito web in Firefox con un doppio clic — esattamente come una scorciatoia di un'applicazione.
+`scorcy.py` è uno script Python che genera file `.desktop` sul Desktop Linux, permettendo di aprire qualsiasi sito web in Firefox con un doppio clic — esattamente come una scorciatoia di un'applicazione.
 
 Funziona in tre modalità:
 
@@ -32,11 +33,31 @@ Funziona in tre modalità:
 
 ---
 
+## Compatibilità
+
+Lo script funziona su distribuzioni Linux con desktop environment **GNOME** o **XFCE** e Firefox installato.
+
+| Distribuzione | Stato | Note |
+|---|---|---|
+| **Ubuntu** 20.04+ | ✅ Supportato | Target principale |
+| **Linux Mint** | ✅ Supportato | Ottima compatibilità |
+| **Pop!_OS** | ✅ Supportato | Basato su Ubuntu |
+| **Zorin OS** | ✅ Supportato | Basato su Ubuntu |
+| **Fedora** (GNOME) | ✅ Supportato | Firefox spesso preinstallato |
+| **Debian** (GNOME/XFCE) | ✅ Supportato | Piccoli aggiustamenti possibili |
+| **Xubuntu / Ubuntu MATE** | ✅ Supportato | XFCE, funziona correttamente |
+| **Arch / Manjaro** | ⚠️ Parziale | Richiede installazione manuale delle dipendenze |
+| **KDE Plasma** | ⚠️ Parziale | `.desktop` funziona, autorizzazione manuale diversa |
+| **openSUSE** | ⚠️ Parziale | `gio` potrebbe non essere disponibile |
+| **Server senza GUI** | ❌ Non supportato | Nessun desktop environment |
+
+---
+
 ## Requisiti
 
-- Ubuntu 20.04 o superiore
+- Linux con desktop environment **GNOME** o **XFCE**
 - Python 3.6+
-- Firefox (installato via `apt` o `snap`)
+- Firefox (installato via `apt`, `dnf` o `snap`)
 - `tkinter` *(solo per la modalità GUI)*
 
 Verifica la versione di Python:
@@ -48,7 +69,14 @@ python3 --version
 Installa `tkinter` se necessario:
 
 ```bash
+# Ubuntu / Debian / Mint
 sudo apt install python3-tk
+
+# Fedora
+sudo dnf install python3-tkinter
+
+# Arch / Manjaro
+sudo pacman -S tk
 ```
 
 ---
@@ -61,7 +89,7 @@ Scarica il file e avvialo dalla cartella dove si trova:
 
 ```bash
 cd ~/Scaricati
-python3 crea_scorciatoia.py
+python3 scorcy.py
 ```
 
 ### Metodo 2 — Comando globale *(consigliato)*
@@ -69,14 +97,14 @@ python3 crea_scorciatoia.py
 Rende lo script disponibile come comando da qualsiasi percorso:
 
 ```bash
-sudo cp ~/Scaricati/crea_scorciatoia.py /usr/local/bin/scorciatoia
-sudo chmod +x /usr/local/bin/scorciatoia
+sudo cp ~/Scaricati/scorcy.py /usr/local/bin/scorcy
+sudo chmod +x /usr/local/bin/scorcy
 ```
 
 Da questo momento in poi:
 
 ```bash
-scorciatoia
+scorcy
 ```
 
 ---
@@ -86,7 +114,7 @@ scorciatoia
 ### Modalità GUI
 
 ```bash
-python3 crea_scorciatoia.py
+python3 scorcy.py
 ```
 
 Si apre una finestra con tre campi:
@@ -98,7 +126,7 @@ Si apre una finestra con tre campi:
 ### Modalità terminale interattivo
 
 ```bash
-python3 crea_scorciatoia.py --terminale
+python3 scorcy.py --terminale
 ```
 
 Lo script guida attraverso i campi uno alla volta e al termine chiede se aggiungere un'altra scorciatoia.
@@ -109,10 +137,10 @@ Crea una scorciatoia senza alcuna interazione:
 
 ```bash
 # Con icona
-python3 crea_scorciatoia.py "YouTube" "https://youtube.com" "youtube.png"
+python3 scorcy.py "YouTube" "https://youtube.com" "youtube.png"
 
 # Senza icona (usa Firefox come default)
-python3 crea_scorciatoia.py "GitHub" "https://github.com"
+python3 scorcy.py "GitHub" "https://github.com"
 ```
 
 | Argomento | Obbligatorio | Esempio |
@@ -134,8 +162,8 @@ Lo script legge le icone dalla cartella:
 Per usare un'icona personalizzata, basta indicare **solo il nome del file** — senza percorso:
 
 ```
-youtube.png        ✅ corretto
-/home/marco/Icons/youtube.png   ❌ non necessario
+youtube.png                      ✅ corretto
+/home/marco/Icons/youtube.png    ❌ non necessario
 ```
 
 **Formati supportati:** `.png`, `.svg`, `.jpg`, `.xpm`
@@ -176,11 +204,11 @@ Con nome basato sul campo **Nome**, ad esempio `YouTube.desktop`.
 
 ### L'icona sul Desktop mostra un lucchetto 🔒
 
-Ubuntu richiede di autorizzare manualmente i file `.desktop` scaricati o creati da script.
+GNOME richiede di autorizzare manualmente i file `.desktop` creati da script.
 
 **Soluzione:** clic destro sull'icona → **"Consenti avvio"**
 
-Lo script tenta di autorizzarla automaticamente tramite `gio`, ma su alcune configurazioni è necessario farlo manualmente.
+Lo script tenta di autorizzarla automaticamente tramite `gio`, ma su alcune configurazioni è necessario farlo manualmente. Su XFCE questo passaggio non è richiesto.
 
 ---
 
@@ -199,7 +227,7 @@ Se Firefox è installato via **Snap** il percorso potrebbe essere `/snap/bin/fir
 
 ### Il Desktop non esiste
 
-Su alcune installazioni di Ubuntu la cartella `~/Desktop` potrebbe non essere presente. Crearla manualmente:
+Su alcune installazioni la cartella `~/Desktop` potrebbe non essere presente. Crearla manualmente:
 
 ```bash
 mkdir ~/Desktop
@@ -209,11 +237,7 @@ mkdir ~/Desktop
 
 ### Errore: `tkinter` non trovato
 
-La modalità GUI richiede `tkinter`. Se non è installato lo script passa automaticamente alla modalità terminale. Per installarlo:
-
-```bash
-sudo apt install python3-tk
-```
+La modalità GUI richiede `tkinter`. Se non è installato, lo script passa automaticamente alla modalità terminale. Per installarlo vedere la sezione [Requisiti](#requisiti).
 
 ---
 
