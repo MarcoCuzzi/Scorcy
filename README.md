@@ -27,26 +27,6 @@ Consulta il README specifico per la tua piattaforma per istruzioni dettagliate.
 
 ---
 
-## Struttura del repository
-
-```
-scorcy/
-├── README.md           ← questa pagina
-├── LICENSE             ← MIT License
-├── .gitignore
-│
-├── linux/
-│   ├── scorcy.py       ← script principale Linux
-│   └── README.md       ← istruzioni Linux
-│
-└── windows/
-    ├── scorcy_win.cpp  ← sorgente C++ Windows
-    ├── scorcy_win.py   ← versione Python alternativa Windows
-    └── README.md       ← istruzioni Windows
-```
-
----
-
 ## Changelog
 
 ### v3.0
