@@ -1,4 +1,4 @@
-# scorcy — Linux
+# Scorcy — Linux
 
 > Crea scorciatoie web sul desktop Linux con un solo comando.
 
@@ -7,57 +7,36 @@
 ## Indice
 
 - [Panoramica](#panoramica)
-- [Compatibilità](#compatibilità)
 - [Requisiti](#requisiti)
 - [Installazione](#installazione)
 - [Utilizzo](#utilizzo)
+- [Browser supportati](#browser-supportati)
 - [Icone personalizzate](#icone-personalizzate)
+- [Struttura del progetto](#struttura-del-progetto)
 - [Struttura del file .desktop generato](#struttura-del-file-desktop-generato)
-- [Risoluzione problemi](#risoluzione-problemi)
-- [Limitazioni note](#limitazioni-note)
-- [Changelog](#changelog)
+- [Compatibilità](#compatibilità)
 
 ---
 
 ## Panoramica
 
-`scorcy.py` è uno script Python che genera file `.desktop` sul Desktop Linux, permettendo di aprire qualsiasi sito web in Firefox con un doppio clic — esattamente come una scorciatoia di un'applicazione.
+Scorcy genera file `.desktop` sul Desktop Linux, permettendo di aprire qualsiasi sito web nel browser scelto con un doppio clic — esattamente come una scorciatoia di un'applicazione nativa.
 
 Funziona in tre modalità:
 
 | Modalità | Descrizione |
 |---|---|
-| **GUI** | Finestra grafica con campi di testo (richiede `tkinter`) |
+| **GUI** | Finestra grafica con tema scuro (richiede `tkinter`) |
 | **Terminale interattivo** | Guida passo passo via prompt |
-| **Argomenti inline** | Un solo comando, nessuna interazione |
-
----
-
-## Compatibilità
-
-Lo script funziona su distribuzioni Linux con desktop environment **GNOME** o **XFCE** e Firefox installato.
-
-| Distribuzione | Stato | Note |
-|---|---|---|
-| **Ubuntu** 20.04+ | ✅ Supportato | Target principale |
-| **Linux Mint** | ✅ Supportato | Ottima compatibilità |
-| **Pop!_OS** | ✅ Supportato | Basato su Ubuntu |
-| **Zorin OS** | ✅ Supportato | Basato su Ubuntu |
-| **Fedora** (GNOME) | ✅ Supportato | Firefox spesso preinstallato |
-| **Debian** (GNOME/XFCE) | ✅ Supportato | Piccoli aggiustamenti possibili |
-| **Xubuntu / Ubuntu MATE** | ✅ Supportato | XFCE, funziona correttamente |
-| **Arch / Manjaro** | ⚠️ Parziale | Richiede installazione manuale delle dipendenze |
-| **KDE Plasma** | ⚠️ Parziale | `.desktop` funziona, autorizzazione manuale diversa |
-| **openSUSE** | ⚠️ Parziale | `gio` potrebbe non essere disponibile |
-| **Server senza GUI** | ❌ Non supportato | Nessun desktop environment |
+| **Inline** | Un solo comando, nessuna interazione |
 
 ---
 
 ## Requisiti
 
 - Linux con desktop environment **GNOME** o **XFCE**
-- Python 3.6+
-- Firefox (installato via `apt`, `dnf` o `snap`)
+- **Python 3.10+**
+- Almeno un browser installato
 - `tkinter` *(solo per la modalità GUI)*
 
 Verifica la versione di Python:
@@ -66,7 +45,7 @@ Verifica la versione di Python:
 python3 --version
 ```
 
-Installa `tkinter` se necessario:
+Installa `tkinter` per la GUI:
 
 ```bash
 # Ubuntu / Debian / Mint
@@ -83,25 +62,29 @@ sudo pacman -S tk
 
 ## Installazione
 
-### Metodo 1 — Uso diretto
-
-Scarica il file e avvialo dalla cartella dove si trova:
+Clona il repository e spostati nella cartella Linux:
 
 ```bash
-cd ~/Scaricati
+git clone https://github.com/MarcoCuzzi/scorcy.git
+cd scorcy/linux_python
+```
+
+### Uso diretto
+
+```bash
 python3 scorcy.py
 ```
 
-### Metodo 2 — Comando globale *(consigliato)*
+### Comando globale *(consigliato)*
 
-Rende lo script disponibile come comando da qualsiasi percorso:
+Rende `scorcy` disponibile da qualsiasi percorso:
 
 ```bash
-sudo cp ~/Scaricati/scorcy.py /usr/local/bin/scorcy
+sudo cp scorcy.py /usr/local/bin/scorcy
 sudo chmod +x /usr/local/bin/scorcy
 ```
 
-Da questo momento in poi:
+Da questo momento:
 
 ```bash
 scorcy
@@ -111,34 +94,36 @@ scorcy
 
 ## Utilizzo
 
-### Modalità GUI
+### GUI
 
 ```bash
 python3 scorcy.py
 ```
 
-Si apre una finestra con tre campi:
+Apre la finestra grafica. Se `tkinter` non è installato, parte automaticamente la modalità terminale con un promemoria per installarlo.
 
-- **Nome** — il testo che apparirà sotto l'icona sul Desktop
-- **URL** — indirizzo completo del sito (es. `https://youtube.com`)
-- **Icona** — nome del file immagine *(opzionale, vedi sezione [Icone](#icone-personalizzate))*
-
-### Modalità terminale interattivo
+### Terminale interattivo
 
 ```bash
-python3 scorcy.py --terminale
+python3 scorcy.py --terminal
+# oppure
+python3 scorcy.py -t
 ```
 
-Lo script guida attraverso i campi uno alla volta e al termine chiede se aggiungere un'altra scorciatoia.
-
-### Modalità argomenti inline
+### Inline — creazione diretta da riga di comando
 
 ```bash
-# Con icona
+# Solo nome e URL
+python3 scorcy.py "YouTube" "https://youtube.com"
+
+# Con icona personalizzata
 python3 scorcy.py "YouTube" "https://youtube.com" "youtube.png"
 
-# Senza icona (usa Firefox come default)
-python3 scorcy.py "GitHub" "https://github.com"
+# Con browser specifico
+python3 scorcy.py "YouTube" "https://youtube.com" "youtube.png" "brave"
+
+# Sovrascrive senza chiedere conferma
+python3 scorcy.py -f "YouTube" "https://youtube.com"
 ```
 
 | Argomento | Obbligatorio | Esempio |
@@ -146,29 +131,87 @@ python3 scorcy.py "GitHub" "https://github.com"
 | `nome` | ✅ | `"YouTube"` |
 | `url` | ✅ | `"https://youtube.com"` |
 | `icona` | ❌ | `"youtube.png"` |
+| `browser` | ❌ | `"firefox"` / `"brave"` / `"chrome"` |
+
+Il flag `-f` può stare in qualsiasi posizione nella riga di comando.
+
+### Altri comandi
+
+```bash
+# Apre la cartella icone nel file manager
+python3 scorcy.py -icons
+python3 scorcy.py -i
+
+# Mostra l'help con i browser rilevati sulla macchina
+python3 scorcy.py --help
+python3 scorcy.py -h
+```
+
+---
+
+## Browser supportati
+
+Scorcy rileva automaticamente all'avvio i browser installati cercando nei percorsi standard. I browser supportati sono:
+
+| Browser | Percorsi cercati |
+|---|---|
+| Firefox | `apt`, `snap` |
+| Chrome | `apt`, percorso standard |
+| Chromium | `apt`, percorso standard |
+| Brave | `apt`, `/opt/brave.com/` |
+| Edge | `apt`, percorso standard |
+| Opera | `apt`, percorso standard |
+| Vivaldi | `apt`, percorso standard |
+| Tor Browser | `torbrowser-launcher` |
+| Epiphany | `apt`, percorso standard |
+| Falkon | `apt`, percorso standard |
+| Midori | `apt`, percorso standard |
+| qutebrowser | `apt`, percorso standard |
+
+Se nessun browser viene trovato, viene usato `xdg-open` come fallback (apre l'URL nel browser predefinito di sistema).
 
 ---
 
 ## Icone personalizzate
 
-Lo script legge le icone dalla cartella:
+Le icone vengono lette dalla cartella:
 
 ```
-~/Icons/
+~/Scorcy/Icons/
 ```
 
-Per usare un'icona personalizzata, basta indicare **solo il nome del file** — senza percorso:
+La cartella viene creata automaticamente all'avvio se non esiste. Per usare un'icona personalizzata, copia il file lì dentro e indica solo il nome — senza percorso:
 
 ```
-youtube.png          ✅ corretto
-~/Icons/youtube.png  ❌ non necessario
+youtube.png       ✅ corretto
+~/Scorcy/Icons/youtube.png   ❌ non necessario
 ```
 
 **Formati supportati:** `.png`, `.svg`, `.jpg`, `.xpm`
 
-**Rilevamento automatico estensione:** se scrivi `youtube` senza estensione, lo script prova in ordine `.png → .svg → .jpg → .xpm`.
+**Rilevamento automatico estensione:** se scrivi `youtube` senza estensione, Scorcy prova in ordine `.png → .svg → .jpg → .xpm`.
 
-**Fallback:** se il file non viene trovato, viene usata l'icona di Firefox e viene mostrato un avviso.
+**Fallback:** se il file non viene trovato, viene usata l'icona del browser scelto.
+
+Dalla GUI puoi aprire la cartella icone direttamente con il pulsante 📂 accanto al campo icona, oppure da riga di comando con:
+
+```bash
+python3 scorcy.py -i
+```
+
+---
+
+## Struttura del progetto
+
+```
+linux_python/
+├── scorcy.py       ← entry point e routing
+├── core.py         ← logica pura (nessuna UI)
+├── ui_gui.py       ← interfaccia grafica tkinter
+└── ui_terminal.py  ← interfaccia terminale interattivo
+```
+
+Tutti e quattro i file devono stare nella stessa cartella.
 
 ---
 
@@ -179,75 +222,28 @@ youtube.png          ✅ corretto
 Version=1.0
 Type=Application
 Name=YouTube
-Comment=Apre YouTube in Firefox
+Comment=Apre YouTube con Firefox
 Exec=/usr/bin/firefox "https://youtube.com"
-Icon=/home/marco/Icons/youtube.png
+Icon=/home/utente/Scorcy/Icons/youtube.png
 Terminal=false
 Categories=Network;WebBrowser;
 ```
 
-I file vengono salvati in `~/Desktop/` con nome basato sul campo **Nome**, ad esempio `YouTube.desktop`.
+I file vengono salvati in `~/Desktop/` (o nella cartella Desktop localizzata, rilevata automaticamente tramite `xdg-user-dir`). Il nome del file è basato sul campo **Nome**, ad esempio `YouTube.desktop`.
 
 ---
 
-## Risoluzione problemi
+## Compatibilità
 
-### L'icona sul Desktop mostra un lucchetto 🔒
-
-GNOME richiede di autorizzare manualmente i file `.desktop` creati da script.
-
-**Soluzione:** clic destro sull'icona → **"Consenti avvio"**
-
-Lo script tenta di autorizzarla automaticamente tramite `gio`, ma su alcune configurazioni è necessario farlo manualmente. Su XFCE questo passaggio non è richiesto.
-
----
-
-### La scorciatoia non si apre
-
-Verificare che Firefox sia installato e raggiungibile:
-
-```bash
-which firefox
-firefox --version
-```
-
-Se Firefox è installato via **Snap** il percorso potrebbe essere `/snap/bin/firefox`. Lo script lo rileva automaticamente, ma in caso di problemi aprire il file `.desktop` con un editor di testo e verificare la riga `Exec=`.
-
----
-
-### Il Desktop non esiste
-
-```bash
-mkdir ~/Desktop
-```
-
----
-
-### Errore: tkinter non trovato
-
-La modalità GUI richiede `tkinter`. Se non è installato, lo script passa automaticamente alla modalità terminale. Per installarlo vedere la sezione [Requisiti](#requisiti).
-
----
-
-## Limitazioni note
-
-- Il percorso delle icone è fisso a `~/Icons/`. Per cambiarlo modificare la variabile `ICONS_PATH` all'inizio dello script.
-- Lo script apre i link esclusivamente con Firefox. Per usare un altro browser modificare la funzione `trova_firefox()`.
-- I nomi delle scorciatoie con caratteri speciali (es. `/`, `\`, `"`) potrebbero causare nomi di file non validi.
-
----
-
-## Changelog
-
-### v3.0
-- Aggiunto supporto icone personalizzate da `~/Icons/`
-- Rilevamento automatico estensione icona
-- Fallback su icona Firefox se il file non viene trovato
-
-### v2.0
-- Cambiato tipo `.desktop` da `Link` ad `Application` per compatibilità con Firefox
-- Rilevamento automatico percorso Firefox (apt e snap)
-- Aggiunta autorizzazione automatica tramite `gio`
-
-### v1.0
-- Prima versione con GUI tkinter e modalità terminale
+| Distribuzione | Stato | Note |
+|---|---|---|
+| **Ubuntu** 20.04+ | ✅ Supportato | Target principale |
+| **Linux Mint** | ✅ Supportato | Ottima compatibilità |
+| **Pop!_OS** | ✅ Supportato | Basato su Ubuntu |
+| **Zorin OS** | ✅ Supportato | Basato su Ubuntu |
+| **Fedora** (GNOME) | ✅ Supportato | |
+| **Debian** (GNOME/XFCE) | ✅ Supportato | |
+| **Xubuntu / Ubuntu MATE** | ✅ Supportato | |
+| **Arch / Manjaro** | ⚠️ Parziale | Dipendenze da installare manualmente |
+| **KDE Plasma** | ⚠️ Parziale | `.desktop` funziona, autorizzazione manuale diversa |
+| **Server senza GUI** | ❌ Non supportato | Nessun desktop environment |
